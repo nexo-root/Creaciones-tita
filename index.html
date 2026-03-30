@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BarberCraft – Estilo, Precisión y Actitud</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET & BASE ─────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black:  #0a0a0a;
+      --dark:   #111111;
+      --mid:    #1c1c1c;
+      --gray:   #2a2a2a;
+      --silver: #aaa;
+      --white:  #f5f5f5;
+      --gold:   #c9a84c;
+      --gold2:  #e8c96a;
+      --radius: 12px;
+      --trans:  0.35s cubic-bezier(.4,0,.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    a { text-decoration: none; color: inherit; }
+
+    .gold { color: var(--gold); }
+    .tag  { display: inline-block; font-size: .7rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: var(--gold); margin-bottom: .75rem; }
+
+    /* ── SCROLL REVEAL (CSS) ──────────────────────────── */
+    .reveal        { opacity: 0; transform: translateY(40px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible{ opacity: 1; transform: translateY(0); }
+    .reveal-left   { opacity: 0; transform: translateX(-50px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal-right  { opacity: 0; transform: translateX(50px);  transition: opacity .7s ease, transform .7s ease; }
+    .reveal-left.visible, .reveal-right.visible { opacity: 1; transform: translateX(0); }
+    .delay-1 { transition-delay: .1s; } .delay-2 { transition-delay: .2s; }
+    .delay-3 { transition-delay: .3s; } .delay-4 { transition-delay: .4s; }
+    .delay-5 { transition-delay: .5s; }
+
+    /* ══════════════════════════════════════════════════
+       PREMIUM PLACEHOLDER SYSTEM
+    ══════════════════════════════════════════════════ */
+    .img-placeholder {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(145deg, #0d0d0d 0%, #171717 45%, #111 100%);
+      border: 1px solid rgba(201,168,76,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      will-change: transform;
+    }
+
+    /* Fondo de puntos sutil */
+    .img-placeholder::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(201,168,76,.07) 1px, transparent 1px);
+      background-size: 22px 22px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Velo de gradiente encima de los puntos */
+    .img-placeholder .ph-velo {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(201,168,76,.04) 0%, transparent 65%),
+                  linear-gradient(135deg, transparent 30%, rgba(0,0,0,.5) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Shimmer sweep — animación CSS de barrido */
+    .img-placeholder .ph-shimmer {
+      position: absolute;
+      top: 0; left: -120%;
+      width: 55%; height: 100%;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(201,168,76,.055) 45%,
+        rgba(201,168,76,.09) 50%,
+        rgba(201,168,76,.055) 55%,
+        transparent 100%);
+      transform: skewX(-18deg);
+      animation: ph-shimmer-anim 3.5s ease-in-out infinite;
+      z-index: 2;
+      pointer-events: none;
+    }
+    @keyframes ph-shimmer-anim {
+      0%   { left: -120%; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { left: 220%; opacity: 0; }
+    }
+
+    /* Glow hover overlay */
+    .img-placeholder .ph-glow {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(201,168,76,.1) 0%, transparent 70%);
+      opacity: 0;
+      z-index: 2;
+      pointer-events: none;
+      transition: opacity .4s ease;
+    }
+    .img-placeholder:hover .ph-glow { opacity: 1; }
+
+    /* 4 esquinas decorativas */
+    .ph-corner {
+      position: absolute;
+      width: 18px; height: 18px;
+      border-color: rgba(201,168,76,.35);
+      border-style: solid;
+      z-index: 3;
+      transition: width .4s ease, height .4s ease, border-color .4s ease;
+    }
+    .ph-corner.tl { top: 10px; left: 10px;  border-width: 1px 0 0 1px; }
+    .ph-corner.tr { top: 10px; right: 10px; border-width: 1px 1px 0 0; }
+    .ph-corner.bl { bottom: 10px; left: 10px;  border-width: 0 0 1px 1px; }
+    .ph-corner.br { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+    .img-placeholder:hover .ph-corner {
+      width: 26px; height: 26px;
+      border-color: rgba(201,168,76,.7);
+    }
+
+    /* Cuerpo central */
+    .ph-body {
+      position: relative; z-index: 4;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: .65rem;
+      text-align: center;
+      padding: 1.5rem;
+      transition: transform .45s cubic-bezier(.4,0,.2,1);
+    }
+    .img-placeholder:hover .ph-body { transform: translateY(-5px); }
+
+    /* SVG Icon */
+    .ph-svg {
+      width: 44px; height: 44px;
+      color: var(--gold);
+      opacity: .28;
+      transition: opacity .45s ease, transform .45s ease;
+      flex-shrink: 0;
+    }
+    .img-placeholder:hover .ph-svg { opacity: .65; transform: scale(1.1); }
+
+    /* Línea separadora */
+    .ph-divider {
+      width: 28px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,.4), transparent);
+      transition: width .4s ease;
+    }
+    .img-placeholder:hover .ph-divider { width: 44px; }
+
+    /* Label principal */
+    .ph-label {
+      font-family: 'Inter', sans-serif;
+      font-size: .68rem; font-weight: 600;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(201,168,76,.45);
+      transition: color .4s ease;
+    }
+    .img-placeholder:hover .ph-label { color: rgba(201,168,76,.9); }
+
+    /* Sub-label */
+    .ph-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: .6rem; font-weight: 400;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(170,170,170,.28);
+      transition: color .4s ease;
+    }
+    .img-placeholder:hover .ph-sub { color: rgba(170,170,170,.55); }
+
+    /* Variante HERO: stripes diagonales tipo barbershop */
+    .img-placeholder.ph-hero {
+      background: linear-gradient(145deg, #0a0a0a 0%, #141414 100%);
+    }
+    .img-placeholder.ph-hero .ph-stripes {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        -55deg,
+        transparent,
+        transparent 28px,
+        rgba(201,168,76,.025) 28px,
+        rgba(201,168,76,.025) 30px
+      );
+      z-index: 0;
+      pointer-events: none;
+    }
+    .img-placeholder.ph-hero .ph-svg { width: 56px; height: 56px; }
+    .img-placeholder.ph-hero .ph-label { font-size: .75rem; letter-spacing: .22em; }
+
+    /* ── NAVBAR ───────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 5%;
+      background: rgba(10,10,10,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(201,168,76,.12);
+      transition: background var(--trans);
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; letter-spacing: .05em; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: .82rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); transition: color var(--trans); }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold); color: var(--black);
+      font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: .6rem 1.4rem; border-radius: 50px;
+      transition: background var(--trans), transform var(--trans), box-shadow var(--trans);
+    }
+    .nav-cta:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,.35); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: var(--trans); }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 6.5rem 5% 4rem;
+      gap: 3rem;
+      position: relative; overflow-x: hidden;
+    }
+    #hero::before {
+      content: ''; position: absolute; top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(201,168,76,.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { z-index: 1; }
+    .hero-eyebrow { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
+    .hero-eyebrow::before { content: ''; display: block; width: 40px; height: 1px; background: var(--gold); }
+    .hero-eyebrow span { font-size: .72rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+    .hero-title { font-size: clamp(2.8rem, 6vw, 5rem); line-height: 1.05; margin-bottom: 1.25rem; }
+    .hero-sub { font-size: 1.1rem; font-weight: 300; color: var(--silver); letter-spacing: .2em; text-transform: uppercase; margin-bottom: 2.5rem; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--gold); color: var(--black);
+      font-size: .85rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: .9rem 2rem; border-radius: 50px; border: none; cursor: pointer; display: inline-block;
+      transition: background var(--trans), transform var(--trans), box-shadow var(--trans);
+    }
+    .btn-primary:hover { background: var(--gold2); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(201,168,76,.4); }
+    .btn-outline {
+      background: transparent; color: var(--white);
+      font-size: .85rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      padding: .9rem 2rem; border-radius: 50px;
+      border: 1.5px solid rgba(255,255,255,.25); cursor: pointer; display: inline-block;
+      transition: border-color var(--trans), color var(--trans), transform var(--trans);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-3px); }
+    .hero-image-wrap { position: relative; z-index: 1; padding-bottom: 30px; }
+    .hero-image-wrap .img-placeholder { width: 100%; aspect-ratio: 4/5; border-radius: var(--radius); }
+    .hero-badge {
+      position: absolute; bottom: -10px; left: -20px;
+      background: var(--gold); color: var(--black);
+      padding: 1.2rem 1.5rem; border-radius: var(--radius);
+      text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    .hero-badge strong { display: block; font-size: 1.8rem; font-weight: 900; line-height: 1; }
+    .hero-badge span   { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .hero-scroll {
+      position: absolute; bottom: 2rem; left: 5%;
+      display: flex; flex-direction: column; align-items: center; gap: .4rem;
+      color: var(--silver); font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; z-index: 2;
+    }
+    .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+
+    /* ── SECTION COMMON ───────────────────────────────── */
+    section { padding: 6rem 5%; }
+    .section-header { text-align: center; margin-bottom: 4rem; }
+    .section-header h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: .75rem; }
+    .section-header p  { color: var(--silver); font-size: 1rem; font-weight: 300; max-width: 500px; margin: 0 auto; }
+    .divider { width: 50px; height: 2px; background: var(--gold); margin: 1rem auto 0; }
+
+    /* ── ABOUT ────────────────────────────────────────── */
+    #about { background: var(--dark); overflow: hidden; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+    .about-img { position: relative; padding: 15px 15px 0 0; }
+    .about-img .img-placeholder { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius); }
+    .about-accent {
+      position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+      border: 2px solid rgba(201,168,76,.2); border-radius: var(--radius); pointer-events: none;
+    }
+    .about-text h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom: 1.25rem; }
+    .about-text p  { color: var(--silver); font-weight: 300; line-height: 1.8; margin-bottom: 1.25rem; }
+    .about-stats { display: flex; gap: 2.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #222; }
+    .stat strong { display: block; font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); }
+    .stat span   { font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--silver); }
+
+    /* ── SERVICES ─────────────────────────────────────── */
+    #servicios { background: var(--black); }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+    .service-card {
+      background: var(--dark); border: 1px solid #1e1e1e; border-radius: var(--radius);
+      overflow: hidden; cursor: pointer;
+      transition: transform var(--trans), box-shadow var(--trans), border-color var(--trans);
+    }
+    .service-card:hover {
+      transform: translateY(-10px) scale(1.01);
+      box-shadow: 0 24px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(201,168,76,.25);
+      border-color: rgba(201,168,76,.3);
+    }
+    .service-card .img-placeholder { aspect-ratio: 4/3; }
+    .service-info { padding: 1.25rem; }
+    .service-info h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: .4rem; }
+    .service-info p  { font-size: .82rem; color: var(--silver); line-height: 1.6; margin-bottom: .75rem; }
+    .service-price   { font-size: .95rem; font-weight: 700; color: var(--gold); }
+
+    /* ── GALLERY ──────────────────────────────────────── */
+    #galeria { background: var(--mid); }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 220px; grid-auto-flow: row dense; gap: 12px;
+    }
+    .gallery-item { overflow: hidden; border-radius: 8px; cursor: pointer; min-height: 0; }
+    .gallery-item .img-placeholder { width: 100%; height: 100%; transition: transform var(--trans); border-radius: 0; }
+    .gallery-item:hover .img-placeholder { transform: scale(1.04); }
+    .gallery-item.tall { grid-row: span 2; }
+    .gallery-item.wide { grid-column: span 2; }
+
+    /* ── TESTIMONIALS ─────────────────────────────────── */
+    #testimonios { background: var(--dark); }
+    .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .testi-card {
+      background: var(--mid); border: 1px solid #2a2a2a; border-radius: var(--radius);
+      padding: 2rem; position: relative;
+      transition: transform var(--trans), box-shadow var(--trans);
+    }
+    .testi-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+    .testi-card::before {
+      content: '"'; position: absolute; top: 1rem; left: 1.5rem;
+      font-family: 'Playfair Display', serif; font-size: 5rem; line-height: 1;
+      color: rgba(201,168,76,.1);
+    }
+    .stars { color: var(--gold); font-size: .9rem; margin-bottom: 1rem; letter-spacing: .1em; }
+    .testi-card p { font-size: .95rem; font-weight: 300; line-height: 1.75; color: var(--silver); margin-bottom: 1.5rem; }
+    .testi-author { display: flex; align-items: center; gap: .75rem; }
+    .testi-avatar { width: 44px; height: 44px; border-radius: 50%; background: #282828; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; color: var(--gold); flex-shrink: 0; }
+    .testi-author-info strong { display: block; font-size: .9rem; }
+    .testi-author-info span   { font-size: .75rem; color: var(--silver); }
+
+    /* ── CONTACT ──────────────────────────────────────── */
+    #contacto { background: var(--black); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .contact-info h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 1rem; }
+    .contact-info p  { color: var(--silver); line-height: 1.7; margin-bottom: 2rem; font-weight: 300; }
+    .contact-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+    .contact-icon { width: 44px; height: 44px; flex-shrink: 0; background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .contact-item-text strong { display: block; font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: .2rem; }
+    .contact-item-text span   { font-size: .9rem; color: var(--silver); }
+    .contact-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2.5rem; }
+    .btn-call { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.2); padding: .85rem 1.75rem; border-radius: 50px; font-size: .85rem; font-weight: 600; letter-spacing: .08em; cursor: pointer; display: inline-block; transition: all var(--trans); }
+    .btn-call:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+    .btn-whatsapp { background: #25D366; color: #fff; border: none; padding: .85rem 1.75rem; border-radius: 50px; font-size: .85rem; font-weight: 700; letter-spacing: .08em; cursor: pointer; display: inline-block; transition: all var(--trans); }
+    .btn-whatsapp:hover { background: #20c25a; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(37,211,102,.35); }
+    .schedule-card { background: var(--dark); border: 1px solid #222; border-radius: var(--radius); padding: 2rem; }
+    .schedule-card h3 { font-size: 1.3rem; margin-bottom: 1.5rem; }
+    .schedule-row { display: flex; justify-content: space-between; padding: .7rem 0; border-bottom: 1px solid #1e1e1e; font-size: .9rem; }
+    .schedule-row:last-child { border-bottom: none; }
+    .schedule-row .day   { color: var(--silver); } .schedule-row .hours { color: var(--white); font-weight: 500; } .schedule-row .closed { color: #444; }
+
+    /* ── CTA FINAL ────────────────────────────────────── */
+    #cta-final { background: linear-gradient(135deg, #0d0d0d 0%, #18140a 50%, #0d0d0d 100%); text-align: center; padding: 7rem 5%; position: relative; overflow: hidden; }
+    #cta-final::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 700px; background: radial-gradient(circle, rgba(201,168,76,.07) 0%, transparent 70%); pointer-events: none; }
+    #cta-final h2 { font-size: clamp(2rem, 5vw, 3.5rem); max-width: 700px; margin: 0 auto 1.5rem; line-height: 1.2; position: relative; z-index: 1; }
+    #cta-final p  { color: var(--silver); font-size: 1.05rem; font-weight: 300; margin-bottom: 3rem; position: relative; z-index: 1; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer { background: var(--dark); border-top: 1px solid #1a1a1a; padding: 2.5rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a { font-size: .8rem; color: var(--silver); transition: color var(--trans); }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: .75rem; color: #444; }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      #hero              { grid-template-columns: 1fr; padding: 7rem 5% 5rem; text-align: center; }
+      .hero-eyebrow      { justify-content: center; }
+      .hero-btns         { justify-content: center; }
+      .hero-image-wrap   { display: none; }
+      .about-grid        { grid-template-columns: 1fr; gap: 3rem; }
+      .about-img         { max-width: 420px; margin: 0 auto; }
+      .contact-grid      { grid-template-columns: 1fr; }
+      .gallery-grid      { grid-template-columns: repeat(2, 1fr); }
+      .gallery-item.wide { grid-column: span 1; }
+      .gallery-item.tall { grid-row: span 2; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger         { display: flex; }
+      .hero-scroll       { display: none; }
+    }
+    @media (max-width: 580px) {
+      section            { padding: 4rem 5%; }
+      .gallery-grid      { grid-template-columns: 1fr 1fr; grid-auto-rows: 160px; }
+      .gallery-item.tall { grid-row: span 1; }
+      .gallery-item.wide { grid-column: span 1; }
+      .about-stats       { flex-wrap: wrap; gap: 1.5rem; }
+      .hero-btns         { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 100%; max-width: 280px; text-align: center; }
+      footer             { flex-direction: column; align-items: center; text-align: center; }
+      .footer-links      { justify-content: center; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-logo">Barber<span>Craft</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">Nosotros</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#testimonios">Opiniones</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <a href="#contacto" class="nav-cta">Reservar turno</a>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </nav>
+
+  <!-- ══════ 1 · HERO ══════ -->
+  <section id="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow reveal"><span>Barbería Premium · Buenos Aires</span></div>
+      <h1 class="hero-title reveal delay-1">Barber<span class="gold">Craft</span></h1>
+      <p class="hero-sub reveal delay-2">Estilo, precisión y actitud</p>
+      <div class="hero-btns reveal delay-3">
+        <a href="#contacto" class="btn-primary">Reservar turno</a>
+        <a href="#contacto" class="btn-outline">Contactar</a>
+      </div>
+    </div>
+
+    <div class="hero-image-wrap reveal-right">
+      <!-- HERO PLACEHOLDER -->
+      <div class="img-placeholder ph-hero" style="aspect-ratio:4/5; border-radius:12px;">
+        <div class="ph-stripes"></div>
+        <div class="ph-velo"></div>
+        <div class="ph-shimmer"></div>
+        <div class="ph-glow"></div>
+        <div class="ph-corner tl"></div><div class="ph-corner tr"></div>
+        <div class="ph-corner bl"></div><div class="ph-corner br"></div>
+        <div class="ph-body">
+          <!-- Scissors SVG -->
+          <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+            <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+            <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+            <line x1="8.12" y1="8.12" x2="12" y2="12"/>
+          </svg>
+          <div class="ph-divider"></div>
+          <span class="ph-label">BarberCraft</span>
+          <span class="ph-sub">Foto de portada</span>
+        </div>
+      </div>
+      <div class="hero-badge">
+        <strong>+10</strong>
+        <span>años de<br>experiencia</span>
+      </div>
+    </div>
+
+    <div class="hero-scroll"><div class="scroll-line"></div><span>Scroll</span></div>
+  </section>
+
+  <!-- ══════ 2 · SOBRE NOSOTROS ══════ -->
+  <section id="about">
+    <div class="about-grid">
+      <div class="about-img reveal-left">
+        <!-- ABOUT PLACEHOLDER -->
+        <div class="img-placeholder" style="aspect-ratio:3/4; border-radius:12px;">
+          <div class="ph-velo"></div>
+          <div class="ph-shimmer"></div>
+          <div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner tr"></div>
+          <div class="ph-corner bl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <!-- Store/building SVG -->
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <div class="ph-divider"></div>
+            <span class="ph-label">Interior</span>
+            <span class="ph-sub">Foto del local</span>
+          </div>
+        </div>
+        <div class="about-accent"></div>
+      </div>
+
+      <div class="about-text reveal-right">
+        <span class="tag">Sobre nosotros</span>
+        <h2>Más de una <span class="gold">década</span><br>dando forma al estilo</h2>
+        <p>En BarberCraft creemos que un buen corte no es solo estética: es confianza, identidad y actitud. Desde 2014 atendemos a cada cliente con dedicación absoluta, respetando su estilo y potenciando su mejor imagen.</p>
+        <p>Nuestro equipo de barberos certificados combina técnicas clásicas con tendencias actuales, garantizando resultados impecables en cada visita. Trabajamos con productos premium en un ambiente cómodo, moderno y pensado para vos.</p>
+        <div class="about-stats">
+          <div class="stat"><strong>+10</strong><span>Años de<br>experiencia</span></div>
+          <div class="stat"><strong>+3K</strong><span>Clientes<br>satisfechos</span></div>
+          <div class="stat"><strong>5★</strong><span>Valoración<br>promedio</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ 3 · SERVICIOS ══════ -->
+  <section id="servicios">
+    <div class="section-header">
+      <span class="tag reveal">Lo que hacemos</span>
+      <h2 class="reveal delay-1">Nuestros <span class="gold">servicios</span></h2>
+      <p class="reveal delay-2">Cada servicio está pensado para que salgas sintiéndote en tu mejor versión.</p>
+      <div class="divider reveal delay-3"></div>
+    </div>
+    <div class="services-grid">
+
+      <!-- Corte clásico -->
+      <div class="service-card">
+        <div class="img-placeholder" style="aspect-ratio:4/3;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+              <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+              <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+              <line x1="8.12" y1="8.12" x2="12" y2="12"/>
+            </svg>
+            <div class="ph-divider"></div>
+            <span class="ph-label">Corte Clásico</span>
+          </div>
+        </div>
+        <div class="service-info">
+          <h3>Corte Clásico</h3>
+          <p>Tijera o máquina, con lavado incluido y finalización con productos premium.</p>
+          <div class="service-price">desde $3.500</div>
+        </div>
+      </div>
+
+      <!-- Fade / Degradado -->
+      <div class="service-card">
+        <div class="img-placeholder" style="aspect-ratio:4/3;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <!-- Gradient bars (fade effect) -->
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+              <rect x="2" y="3" width="20" height="3" rx="1.5"/>
+              <rect x="2" y="9" width="16" height="3" rx="1.5"/>
+              <rect x="2" y="15" width="10" height="3" rx="1.5"/>
+              <rect x="2" y="21" width="5"  height="1.5" rx=".75"/>
+            </svg>
+            <div class="ph-divider"></div>
+            <span class="ph-label">Fade / Degradado</span>
+          </div>
+        </div>
+        <div class="service-info">
+          <h3>Fade / Degradado</h3>
+          <p>Low, mid o high fade. Transición perfecta ejecutada con precisión máquina.</p>
+          <div class="service-price">desde $4.200</div>
+        </div>
+      </div>
+
+      <!-- Arreglo de barba -->
+      <div class="service-card">
+        <div class="img-placeholder" style="aspect-ratio:4/3;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <!-- Razor SVG -->
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="8" width="20" height="8" rx="2"/>
+              <line x1="8"  y1="8" x2="8"  y2="16"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="16" y1="8" x2="16" y2="16"/>
+              <line x1="5"  y1="12" x2="7" y2="12"/>
+            </svg>
+            <div class="ph-divider"></div>
+            <span class="ph-label">Arreglo de Barba</span>
+          </div>
+        </div>
+        <div class="service-info">
+          <h3>Arreglo de Barba</h3>
+          <p>Perfilado, delineado y acabado con navaja recta y toalla caliente.</p>
+          <div class="service-price">desde $2.500</div>
+        </div>
+      </div>
+
+      <!-- Perfilado -->
+      <div class="service-card">
+        <div class="img-placeholder" style="aspect-ratio:4/3;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <!-- Comb SVG -->
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="8" width="20" height="5" rx="2.5"/>
+              <line x1="6"  y1="13" x2="6"  y2="19"/>
+              <line x1="9"  y1="13" x2="9"  y2="19"/>
+              <line x1="12" y1="13" x2="12" y2="19"/>
+              <line x1="15" y1="13" x2="15" y2="19"/>
+              <line x1="18" y1="13" x2="18" y2="19"/>
+            </svg>
+            <div class="ph-divider"></div>
+            <span class="ph-label">Perfilado</span>
+          </div>
+        </div>
+        <div class="service-info">
+          <h3>Perfilado</h3>
+          <p>Definición de entradas, nuca y patillas para un acabado nítido y preciso.</p>
+          <div class="service-price">desde $1.800</div>
+        </div>
+      </div>
+
+      <!-- Tratamientos capilares -->
+      <div class="service-card">
+        <div class="img-placeholder" style="aspect-ratio:4/3;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <!-- Droplet SVG -->
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+            <div class="ph-divider"></div>
+            <span class="ph-label">Tratamientos</span>
+          </div>
+        </div>
+        <div class="service-info">
+          <h3>Tratamientos Capilares</h3>
+          <p>Hidratación profunda, keratina y nutrición para un cabello sano y brillante.</p>
+          <div class="service-price">desde $5.000</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════ 4 · GALERÍA ══════ -->
+  <section id="galeria">
+    <div class="section-header">
+      <span class="tag reveal">Nuestro trabajo</span>
+      <h2 class="reveal delay-1">La <span class="gold">galería</span></h2>
+      <p class="reveal delay-2">Resultados que hablan por sí solos.</p>
+      <div class="divider reveal delay-3"></div>
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid">
+
+      <div class="gallery-item tall">
+        <div class="img-placeholder" style="height:100%;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+              <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+              <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+              <line x1="8.12" y1="8.12" x2="12" y2="12"/>
+            </svg>
+            <span class="ph-label">Resultado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="img-placeholder" style="height:100%;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+              <rect x="2" y="3" width="20" height="3" rx="1.5"/><rect x="2" y="9" width="16" height="3" rx="1.5"/><rect x="2" y="15" width="10" height="3" rx="1.5"/>
+            </svg>
+            <span class="ph-label">Fade</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="img-placeholder" style="height:100%;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="8" width="20" height="8" rx="2"/>
+              <line x1="8" y1="8" x2="8" y2="16"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="16" y1="8" x2="16" y2="16"/>
+            </svg>
+            <span class="ph-label">Barba</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item wide">
+        <div class="img-placeholder" style="height:100%;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="ph-label">Ambiente</span><span class="ph-sub">Vista del local</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="img-placeholder" style="height:100%;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+              <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+              <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+              <line x1="8.12" y1="8.12" x2="12" y2="12"/>
+            </svg>
+            <span class="ph-label">Clásico</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="img-placeholder" style="height:100%;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="8" width="20" height="5" rx="2.5"/>
+              <line x1="6" y1="13" x2="6" y2="19"/><line x1="9" y1="13" x2="9" y2="19"/><line x1="12" y1="13" x2="12" y2="19"/><line x1="15" y1="13" x2="15" y2="19"/><line x1="18" y1="13" x2="18" y2="19"/>
+            </svg>
+            <span class="ph-label">Perfilado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="img-placeholder" style="height:100%;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+              <rect x="2" y="3" width="20" height="3" rx="1.5"/><rect x="2" y="9" width="16" height="3" rx="1.5"/><rect x="2" y="15" width="10" height="3" rx="1.5"/>
+            </svg>
+            <span class="ph-label">Degradado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item tall">
+        <div class="img-placeholder" style="height:100%;">
+          <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
+          <div class="ph-corner tl"></div><div class="ph-corner br"></div>
+          <div class="ph-body">
+            <!-- Before/after split icon -->
+            <svg class="ph-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+              <rect x="2" y="3" width="20" height="18" rx="2"/>
+              <line x1="12" y1="3" x2="12" y2="21"/>
+              <polyline points="8 9 5 12 8 15"/>
+              <polyline points="16 9 19 12 16 15"/>
+            </svg>
+            <span class="ph-label">Antes / Después</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════ 5 · TESTIMONIOS ══════ -->
+  <section id="testimonios">
+    <div class="section-header">
+      <span class="tag reveal">Lo que dicen</span>
+      <h2 class="reveal delay-1">Clientes <span class="gold">satisfechos</span></h2>
+      <p class="reveal delay-2">La opinión de quienes confían en nosotros cada semana.</p>
+      <div class="divider reveal delay-3"></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal delay-1">
+        <div class="stars">★★★★★</div>
+        <p>"Excelente atención y cortes impecables. Hace dos años que vengo y nunca me decepcionaron. El ambiente es cómodo, el equipo siempre está al día con las últimas tendencias y te hacen sentir como en casa."</p>
+        <div class="testi-author"><div class="testi-avatar">MR</div><div class="testi-author-info"><strong>Matías R.</strong><span>Cliente desde 2022</span></div></div>
+      </div>
+      <div class="testi-card reveal delay-2">
+        <div class="stars">★★★★★</div>
+        <p>"Me hicieron el mejor fade que tuve en mi vida. Llegué con una foto de referencia y lo replicaron perfectamente, incluso mejor de lo que esperaba. Definitivamente volvería mil veces."</p>
+        <div class="testi-author"><div class="testi-avatar">LG</div><div class="testi-author-info"><strong>Lucas G.</strong><span>Cliente desde 2023</span></div></div>
+      </div>
+      <div class="testi-card reveal delay-3">
+        <div class="stars">★★★★★</div>
+        <p>"El arreglo de barba que me hicieron fue increíble. Puntualidad total, profesionalismo de primer nivel y un resultado que me hizo ganar mucha confianza. Los recomiendo a todos sin dudarlo."</p>
+        <div class="testi-author"><div class="testi-avatar">FV</div><div class="testi-author-info"><strong>Federico V.</strong><span>Cliente desde 2021</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ 6 · CONTACTO ══════ -->
+  <section id="contacto">
+    <div class="contact-grid">
+      <div class="contact-info reveal-left">
+        <span class="tag">Encontranos</span>
+        <h2>Vení a <span class="gold">visitarnos</span></h2>
+        <p>Estamos para atenderte de lunes a sábado. Podés venir directamente o reservar tu turno con anticipación por WhatsApp o teléfono.</p>
+        <div class="contact-item"><div class="contact-icon">📍</div><div class="contact-item-text"><strong>Dirección</strong><span>Av. Corrientes 1234, CABA, Buenos Aires</span></div></div>
+        <div class="contact-item"><div class="contact-icon">📞</div><div class="contact-item-text"><strong>Teléfono</strong><span>+54 11 4567-8901</span></div></div>
+        <div class="contact-item"><div class="contact-icon">⏰</div><div class="contact-item-text"><strong>Horarios</strong><span>Lun – Vie: 9:00 a 20:00 · Sáb: 9:00 a 18:00</span></div></div>
+        <div class="contact-btns">
+          <a href="tel:+541145678901" class="btn-call">📞 &nbsp;Llamar</a>
+          <a href="https://wa.me/541145678901" class="btn-whatsapp">💬 &nbsp;WhatsApp</a>
+        </div>
+      </div>
+      <div class="schedule-card reveal-right">
+        <h3>Horarios <span class="gold">detallados</span></h3>
+        <div class="schedule-row"><span class="day">Lunes</span><span class="hours">09:00 – 20:00</span></div>
+        <div class="schedule-row"><span class="day">Martes</span><span class="hours">09:00 – 20:00</span></div>
+        <div class="schedule-row"><span class="day">Miércoles</span><span class="hours">09:00 – 20:00</span></div>
+        <div class="schedule-row"><span class="day">Jueves</span><span class="hours">09:00 – 20:00</span></div>
+        <div class="schedule-row"><span class="day">Viernes</span><span class="hours">09:00 – 20:00</span></div>
+        <div class="schedule-row"><span class="day">Sábado</span><span class="hours">09:00 – 18:00</span></div>
+        <div class="schedule-row"><span class="day">Domingo</span><span class="closed">Cerrado</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ 7 · CTA FINAL ══════ -->
+  <section id="cta-final">
+    <span class="tag reveal">¿Listo para el cambio?</span>
+    <h2 class="reveal delay-1">Reservá tu turno hoy y llevá tu estilo<br><span class="gold">al siguiente nivel.</span></h2>
+    <p class="reveal delay-2">Tu mejor versión está a un turno de distancia.</p>
+    <div class="cta-btns reveal delay-3">
+      <a href="https://wa.me/541145678901" class="btn-primary">Reservar por WhatsApp</a>
+      <a href="tel:+541145678901" class="btn-outline">Llamar ahora</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Barber<span>Craft</span></div>
+    <ul class="footer-links">
+      <li><a href="#about">Nosotros</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <span class="footer-copy">© 2025 BarberCraft. Todos los derechos reservados.</span>
+  </footer>
+
+  <!-- ══════════════════════════════════════
+       GSAP · CDN
+  ════════════════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <script>
+    // ── Registrar ScrollTrigger ─────────────────────────
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── 1. HERO placeholder: entrada suave ─────────────
+    gsap.from('.hero-image-wrap .img-placeholder', {
+      duration: 1.2,
+      opacity: 0,
+      scale: 0.96,
+      y: 30,
+      ease: 'power3.out',
+      delay: 0.6
+    });
+
+    // ── 2. SERVICE CARDS: entrada staggered con ScrollTrigger
+    gsap.from('.service-card', {
+      scrollTrigger: {
+        trigger: '#servicios .services-grid',
+        start: 'top 80%',
+        toggleActions: 'play none none none'
+      },
+      duration: 0.7,
+      opacity: 0,
+      y: 50,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    // ── 3. GALLERY ITEMS: entrada staggered ────────────
+    gsap.from('.gallery-item', {
+      scrollTrigger: {
+        trigger: '#galleryGrid',
+        start: 'top 80%',
+        toggleActions: 'play none none none'
+      },
+      duration: 0.6,
+      opacity: 0,
+      scale: 0.92,
+      stagger: { amount: 0.5, from: 'start' },
+      ease: 'power2.out'
+    });
+
+    // ── 4. Stagger shimmer delays para que no sean síncronos
+    document.querySelectorAll('.ph-shimmer').forEach((el, i) => {
+      el.style.animationDelay = `${((i * 0.55) % 3.5).toFixed(2)}s`;
+    });
+
+    // ── 5. CSS scroll reveal (IntersectionObserver) ────
+    const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const observer  = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // ── 6. Navbar fondo al hacer scroll ───────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.style.background = window.scrollY > 50
+        ? 'rgba(10,10,10,0.97)' : 'rgba(10,10,10,0.85)';
+    });
+
+    // ── 7. Hamburger mobile ────────────────────────────
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const links = document.querySelector('.nav-links');
+      const open  = links.style.display === 'flex';
+      if (open) {
+        links.removeAttribute('style');
+      } else {
+        Object.assign(links.style, {
+          display: 'flex', flexDirection: 'column', position: 'absolute',
+          top: '70px', left: '0', right: '0', background: '#0d0d0d',
+          padding: '1.5rem 5%', gap: '1.2rem',
+          borderBottom: '1px solid #1a1a1a', zIndex: '999'
+        });
+      }
+    });
+  </script>
+</body>
+</html>
