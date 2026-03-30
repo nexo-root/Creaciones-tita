@@ -158,6 +158,7 @@
 
     /* Label principal */
     .ph-label {
+      font-family: 'Inter', sans-serif;
       font-size: .68rem; font-weight: 600;
       letter-spacing: .18em; text-transform: uppercase;
       color: rgba(201,168,76,.45);
@@ -167,6 +168,7 @@
 
     /* Sub-label */
     .ph-sub {
+      font-family: 'Inter', sans-serif;
       font-size: .6rem; font-weight: 400;
       letter-spacing: .1em; text-transform: uppercase;
       color: rgba(170,170,170,.28);
@@ -282,7 +284,7 @@
 
     /* ── ABOUT ────────────────────────────────────────── */
     #about { background: var(--dark); overflow: hidden; }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
     .about-img { position: relative; padding: 15px 15px 0 0; }
     .about-img .img-placeholder { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius); }
     .about-accent {
@@ -521,7 +523,7 @@
     <div class="services-grid">
 
       <!-- Corte clásico -->
-      <div class="service-card reveal delay-1">
+      <div class="service-card">
         <div class="img-placeholder" style="aspect-ratio:4/3;">
           <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
           <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
@@ -544,7 +546,7 @@
       </div>
 
       <!-- Fade / Degradado -->
-      <div class="service-card reveal delay-2">
+      <div class="service-card">
         <div class="img-placeholder" style="aspect-ratio:4/3;">
           <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
           <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
@@ -568,7 +570,7 @@
       </div>
 
       <!-- Arreglo de barba -->
-      <div class="service-card reveal delay-3">
+      <div class="service-card">
         <div class="img-placeholder" style="aspect-ratio:4/3;">
           <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
           <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
@@ -593,7 +595,7 @@
       </div>
 
       <!-- Perfilado -->
-      <div class="service-card reveal delay-4">
+      <div class="service-card">
         <div class="img-placeholder" style="aspect-ratio:4/3;">
           <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
           <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
@@ -619,7 +621,7 @@
       </div>
 
       <!-- Tratamientos capilares -->
-      <div class="service-card reveal delay-5">
+      <div class="service-card">
         <div class="img-placeholder" style="aspect-ratio:4/3;">
           <div class="ph-velo"></div><div class="ph-shimmer"></div><div class="ph-glow"></div>
           <div class="ph-corner tl"></div><div class="ph-corner tr"></div><div class="ph-corner bl"></div><div class="ph-corner br"></div>
@@ -899,7 +901,12 @@
       ease: 'power2.out'
     });
 
-    // ── 4. CSS scroll reveal (IntersectionObserver) ────
+    // ── 4. Stagger shimmer delays para que no sean síncronos
+    document.querySelectorAll('.ph-shimmer').forEach((el, i) => {
+      el.style.animationDelay = `${((i * 0.55) % 3.5).toFixed(2)}s`;
+    });
+
+    // ── 5. CSS scroll reveal (IntersectionObserver) ────
     const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
     const observer  = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -908,14 +915,14 @@
     }, { threshold: 0.12 });
     revealEls.forEach(el => observer.observe(el));
 
-    // ── 5. Navbar fondo al hacer scroll ───────────────
+    // ── 6. Navbar fondo al hacer scroll ───────────────
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.style.background = window.scrollY > 50
         ? 'rgba(10,10,10,0.97)' : 'rgba(10,10,10,0.85)';
     });
 
-    // ── 6. Hamburger mobile ────────────────────────────
+    // ── 7. Hamburger mobile ────────────────────────────
     document.getElementById('hamburger').addEventListener('click', () => {
       const links = document.querySelector('.nav-links');
       const open  = links.style.display === 'flex';
