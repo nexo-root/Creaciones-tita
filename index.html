@@ -289,13 +289,8 @@
     /* ── ABOUT ────────────────────────────────────────── */
     #about { background: var(--dark); overflow: hidden; }
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
-    .about-img { position: relative; padding: 10px; }
-    .about-img .img-placeholder { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius); position: relative; z-index: 1; }
-    .about-accent {
-      position: absolute; inset: 0;
-      border: 1px solid rgba(201,168,76,.25); border-radius: calc(var(--radius) + 2px);
-      pointer-events: none; z-index: 0;
-    }
+    .about-img { position: relative; }
+    .about-img .img-placeholder { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius); }
     .about-text h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom: 1.25rem; }
     .about-text p  { color: var(--silver); font-weight: 300; line-height: 1.8; margin-bottom: 1.25rem; }
     .about-stats { display: flex; gap: 2.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #222; }
@@ -547,7 +542,6 @@
             <span class="ph-sub">Foto del local</span>
           </div>
         </div>
-        <div class="about-accent"></div>
       </div>
 
       <div class="about-text reveal-right">
