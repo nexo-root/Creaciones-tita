@@ -289,8 +289,8 @@
     /* ── ABOUT ────────────────────────────────────────── */
     #about { background: var(--dark); overflow: hidden; }
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
-    .about-img { position: relative; }
-    .about-img .img-placeholder { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius); }
+    .about-img { display: block; }
+    .about-ph { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius); display: flex; }
     .about-text h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom: 1.25rem; }
     .about-text p  { color: var(--silver); font-weight: 300; line-height: 1.8; margin-bottom: 1.25rem; }
     .about-stats { display: flex; gap: 2.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #222; }
@@ -525,7 +525,7 @@
     <div class="about-grid">
       <div class="about-img reveal-left">
         <!-- ABOUT PLACEHOLDER -->
-        <div class="img-placeholder" style="aspect-ratio:3/4; border-radius:12px;">
+        <div class="img-placeholder about-ph">
           <div class="ph-velo"></div>
           <div class="ph-shimmer"></div>
           <div class="ph-glow"></div>
